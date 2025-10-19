@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Registro de Producción - Avícola Zavaleta{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-success text-white py-4">
+                <h4 class="card-title mb-0 fw-bold text-center" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                    <i class="fas fa-egg me-2"></i>
+                    Registro Diario de Producción
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <!-- Información del Lote -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="{{ form.lote.id_for_label }}" class="form-label fw-semibold text-dark">Lote*</label>
+                            {{ form.lote }}
+                            {% if form.lote.errors %}
+                                <div class="text-danger small mt-1">{{ form.lote.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.fecha.id_for_label }}" class="form-label fw-semibold text-dark">Fecha*</label>
+                            {{ form.fecha }}
+                            {% if form.fecha.errors %}
+                                <div class="text-danger small mt-1">{{ form.fecha.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Producción de Huevos -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="fw-bold text-success mb-3" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                                <i class="fas fa-chart-bar me-2"></i>
+                                Producción de Huevos
+                            </h5>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.huevos_buenos.id_for_label }}" class="form-label fw-semibold text-dark">
+                                <i class="fas fa-check-circle text-success me-1"></i>
+                                Huevos Buenos*
+                            </label>
+                            {{ form.huevos_buenos }}
+                            {% if form.huevos_buenos.errors %}
+                                <div class="text-danger small mt-1">{{ form.huevos_buenos.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.huevos_rotos.id_for_label }}" class="form-label fw-semibold text-dark">
+                                <i class="fas fa-times-circle text-danger me-1"></i>
+                                Huevos Rotos*
+                            </label>
+                            {{ form.huevos_rotos }}
+                            {% if form.huevos_rotos.errors %}
+                                <div class="text-danger small mt-1">{{ form.huevos_rotos.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.huevos_defectuosos.id_for_label }}" class="form-label fw-semibold text-dark">
+                                <i class="fas fa-exclamation-triangle text-warning me-1"></i>
+                                Huevos Defectuosos*
+                            </label>
+                            {{ form.huevos_defectuosos }}
+                            {% if form.huevos_defectuosos.errors %}
+                                <div class="text-danger small mt-1">{{ form.huevos_defectuosos.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Ventas -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="fw-bold text-primary mb-3" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                                <i class="fas fa-dollar-sign me-2"></i>
+                                Ventas
+                            </h5>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.celdas_vendidas.id_for_label }}" class="form-label fw-semibold text-dark">
+                                <i class="fas fa-shopping-cart text-primary me-1"></i>
+                                Celdas Vendidas*
+                            </label>
+                            {{ form.celdas_vendidas }}
+                            <div class="text-muted small mt-1">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Cada celda = 30 huevos
+                            </div>
+                            {% if form.celdas_vendidas.errors %}
+                                <div class="text-danger small mt-1">{{ form.celdas_vendidas.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="/" class="btn btn-outline-secondary me-md-2 px-4">
+                            <i class="fas fa-arrow-left me-1"></i>
+                            Volver al Dashboard
+                        </a>
+                        <button type="submit" class="btn btn-success px-4 fw-semibold">
+                            <i class="fas fa-save me-1"></i>
+                            Guardar Registro
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control, .form-select {
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 12px;
+        font-size: 1rem;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #198754;
+        box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+    }
+    
+    .form-label {
+        font-size: 0.95rem;
+        margin-bottom: 8px;
+    }
+    
+    .card {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .btn {
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-weight: 500;
+    }
+    
+    .btn-success {
+        background: linear-gradient(135deg, #198754, #157347);
+        border: none;
+    }
+    
+    .btn-success:hover {
+        background: linear-gradient(135deg, #157347, #13653f);
+        transform: translateY(-1px);
+    }
+</style>
+{% endblock %}

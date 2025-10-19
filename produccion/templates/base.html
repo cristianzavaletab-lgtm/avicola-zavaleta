@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Avícola Zavaleta{% endblock %}</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --verde-avicola: #2E8B57;
+            --beige-claro: #F5F5DC;
+            --beige-oscuro: #E6D7B8;
+            --texto-oscuro: #2C3E50;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .sidebar {
+            background: linear-gradient(135deg, var(--verde-avicola) 0%, #1E6B47 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 12px 20px;
+            margin: 4px 0;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar .nav-link:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        .sidebar .nav-link.active {
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--verde-avicola) !important;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .stat-card i {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .bg-beige {
+            background-color: var(--beige-claro);
+        }
+        
+        .btn-avicola {
+            background-color: var(--verde-avicola);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+        
+        .btn-avicola:hover {
+            background-color: #1E6B47;
+            color: white;
+        }
+        
+        .alert-custom {
+            border-radius: 10px;
+            border-left: 5px solid;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                min-height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse bg-beige">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h4 class="text-dark">
+                            <i class="fas fa-egg me-2"></i>
+                            Avícola Zavaleta
+                        </h4>
+                        <hr>
+                    </div>
+                    
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+                                <i class="fas fa-home me-2"></i>
+                                Inicio
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'produccion' in request.resolver_match.url_name %}active{% endif %}" href="/produccion/registro/">
+                                <i class="fas fa-egg me-2"></i>
+                                Producción
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'alimento' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'gestion_alimento' %}">
+                                <i class="fas fa-wheat-alt me-2"></i>
+                                Alimento
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'rentabilidad' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'rentabilidad' %}">
+                                <i class="fas fa-chart-line me-2"></i>
+                                Rentabilidad
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'reportes' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'reportes' %}">
+                                <i class="fas fa-chart-bar me-2"></i>
+                                Reportes
+                            </a>
+                        </li>
+                        {% if user.is_authenticated and user.rol == 'dueño' %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'usuarios' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'gestion_usuarios' %}">
+                                <i class="fas fa-users me-2"></i>
+                                Usuarios
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                    
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <small class="text-muted">
+                            <i class="fas fa-user me-1"></i>
+                            {{ user.username }}<br>
+                            <span class="badge bg-avicola">{{ user.get_rol_display }}</span>
+                        </small>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <!-- Navbar -->
+                <nav class="navbar navbar-expand-lg navbar-light bg-white rounded shadow-sm mb-4">
+                    <div class="container-fluid">
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        
+                        <div class="collapse navbar-collapse" id="navbarContent">
+                            <ul class="navbar-nav me-auto">
+                                <li class="nav-item">
+                                    <span class="navbar-text text-muted">
+                                        <i class="fas fa-calendar-day me-1"></i>
+                                        {% now "l, d F Y" %}
+                                    </span>
+                                </li>
+                            </ul>
+                            
+                            <ul class="navbar-nav">
+                                {% if user.is_authenticated %}
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-user-circle me-1"></i>
+                                        {{ user.get_full_name|default:user.username }}
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="{% url 'logout' %}">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                                        </a></li>
+                                    </ul>
+                                </li>
+                                {% else %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'login' %}">
+                                        <i class="fas fa-sign-in-alt me-1"></i>Iniciar Sesión
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- Messages -->
+                {% if messages %}
+                <div class="messages mb-4">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Content -->
+                {% block content %}
+                {% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    {% block extra_js %}
+    {% endblock %}
+</body>
+</html>

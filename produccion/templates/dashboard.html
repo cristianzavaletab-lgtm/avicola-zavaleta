@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Avícola Zavaleta{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-3 mb-4">
+    <h1 class="h2">
+        <i class="fas fa-tachometer-alt me-2"></i>
+        Dashboard
+    </h1>
+    <div class="btn-toolbar">
+        <span class="badge bg-success fs-6">
+            <i class="fas fa-egg me-1"></i>
+            Lote Activo: {{ lote_activo.nombre_lote|default:"No configurado" }}
+        </span>
+    </div>
+</div>
+
+<!-- Alertas -->
+{% if alertas %}
+<div class="row mb-4">
+    <div class="col-12">
+        {% for alerta in alertas %}
+        <div class="alert alert-{{ alerta.tipo }} alert-custom d-flex align-items-center">
+            <i class="fas fa-{{ alerta.icono }} me-3 fs-4"></i>
+            <div>
+                <h5 class="alert-heading mb-1">{{ alerta.titulo }}</h5>
+                <p class="mb-0">{{ alerta.mensaje }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Tarjetas de Indicadores -->
+<div class="row mb-4">
+    <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
+        <div class="card stat-card border-success">
+            <div class="card-body text-success">
+                <i class="fas fa-egg"></i>
+                <h3>{{ hoy.huevos_buenos|default:0 }}</h3>
+                <p class="mb-0">Huevos Buenos</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
+        <div class="card stat-card border-danger">
+            <div class="card-body text-danger">
+                <i class="fas fa-heart-crack"></i>
+                <h3>{{ hoy.huevos_rotos|default:0 }}</h3>
+                <p class="mb-0">Huevos Rotos</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
+        <div class="card stat-card border-warning">
+            <div class="card-body text-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>{{ hoy.huevos_defectuosos|default:0 }}</h3>
+                <p class="mb-0">Huevos Defectuosos</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
+        <div class="card stat-card border-info">
+            <div class="card-body text-info">
+                <i class="fas fa-wheat-alt"></i>
+                <h3>{{ alimento_restante }}kg</h3>
+                <p class="mb-0">Alimento Restante</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
+        <div class="card stat-card border-primary">
+            <div class="card-body text-primary">
+                <i class="fas fa-coins"></i>
+                <h3>S/{{ ganancia_semanal|default:0 }}</h3>
+                <p class="mb-0">Ganancia Semanal</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
+        <div class="card stat-card border-secondary">
+            <div class="card-body text-secondary">
+                <i class="fas fa-percentage"></i>
+                <h3>{{ rendimiento|default:0 }}%</h3>
+                <p class="mb-0">Rendimiento</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Gráfico de Producción Semanal -->
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-header bg-beige">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-line me-2"></i>
+                    Producción Semanal
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="produccionChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Acciones Rápidas -->
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header bg-beige">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-bolt me-2"></i>
+                    Acciones Rápidas
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="/produccion/registro/" class="btn btn-avicola btn-lg">
+                        <i class="fas fa-plus me-2"></i>
+                        Registrar Producción Hoy
+                    </a>
+                    <!-- ✅ CORREGIDO: Cambiado a alimento/registrar/ -->
+                    <a href="/alimento/registrar/" class="btn btn-outline-success btn-lg">
+                        <i class="fas fa-wheat-alt me-2"></i>
+                        Gestionar Alimento
+                    </a>
+                    {% if user.rol == 'dueño' %}
+                    <a href="/reportes/" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-file-pdf me-2"></i>
+                        Generar Reporte PDF
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Resumen del Día -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-beige">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-sun me-2"></i>
+                    Resumen del Día - {{ hoy.fecha|default:"Hoy" }}
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if hoy %}
+                <div class="row text-center">
+                    <div class="col-4">
+                        <h4 class="text-success">{{ hoy.total_huevos }}</h4>
+                        <small class="text-muted">Total Huevos</small>
+                    </div>
+                    <div class="col-4">
+                        <h4 class="text-primary">{{ hoy.celdas_vendidas }}</h4>
+                        <small class="text-muted">Celdas Vendidas</small>
+                    </div>
+                    <div class="col-4">
+                        <h4 class="text-success">S/{{ hoy.ingreso_calculado }}</h4>
+                        <small class="text-muted">Ingreso del Día</small>
+                    </div>
+                </div>
+                {% else %}
+                <p class="text-muted text-center">No hay registro de producción para hoy.</p>
+                <div class="text-center">
+                    <a href="/produccion/registro/" class="btn btn-avicola">
+                        <i class="fas fa-plus me-1"></i>
+                        Registrar Producción
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Próximas Alertas -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-beige">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-bell me-2"></i>
+                    Próximas Alertas
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted text-center">No hay alertas próximas.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Gráfico de producción semanal con datos de ejemplo
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('produccionChart');
+    if (ctx) {
+        // Datos de ejemplo para la semana
+        const fechasSemana = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+        const produccionBuenos = [45, 48, 42, 50, 47, 49, 46];
+        const produccionRotos = [2, 1, 3, 1, 2, 1, 2];
+        
+        const produccionChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: fechasSemana,
+                datasets: [
+                    {
+                        label: 'Huevos Buenos',
+                        data: produccionBuenos,
+                        borderColor: '#28a745',
+                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Huevos Rotos',
+                        data: produccionRotos,
+                        borderColor: '#dc3545',
+                        backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Producción de la Semana'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Cantidad de Huevos'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Días de la Semana'
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

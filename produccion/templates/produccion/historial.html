@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Historial de Producción - Avícola Zavaleta{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-3 mb-4">
+    <h1 class="h2">
+        <i class="fas fa-history me-2"></i>
+        Historial de Producción
+    </h1>
+    <div class="btn-toolbar">
+        <a href="{% url 'registro_produccion' %}" class="btn btn-success">
+            <i class="fas fa-plus me-2"></i>
+            Nuevo Registro
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-beige">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-list me-2"></i>
+            Últimos 30 días - {{ lote_activo.nombre_lote }}
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if produccion %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-success">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>🥚 Buenos</th>
+                        <th>💔 Rotos</th>
+                        <th>⚡ Defectuosos</th>
+                        <th>Total</th>
+                        <th>💰 Celdas</th>
+                        <th>Ingreso</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for registro in produccion %}
+                    <tr>
+                        <td>{{ registro.fecha|date:"d/m/Y" }}</td>
+                        <td class="text-success">{{ registro.huevos_buenos }}</td>
+                        <td class="text-danger">{{ registro.huevos_rotos }}</td>
+                        <td class="text-warning">{{ registro.huevos_defectuosos }}</td>
+                        <td><strong>{{ registro.total_huevos }}</strong></td>
+                        <td class="text-primary">{{ registro.celdas_vendidas }}</td>
+                        <td class="text-success"><strong>S/ {{ registro.ingreso_calculado }}</strong></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">No hay registros de producción</h5>
+            <p class="text-muted">Comienza registrando la producción del día de hoy.</p>
+            <a href="{% url 'registro_produccion' %}" class="btn btn-success">
+                <i class="fas fa-plus me-2"></i>
+                Primer Registro
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
