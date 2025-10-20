@@ -1,0 +1,19 @@
+# Django
+*.pyc
+__pycache__/
+db.sqlite3
+.env
+.env.local
+/staticfiles/
+/mediafiles/
+ECHO est  activado.
+# IDE
+.vscode/
+.idea/
+ECHO est  activado.
+# Logs
+*.log
+ECHO est  activado.
+# OS
+.DS_Store
+Thumbs.db
