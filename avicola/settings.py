@@ -79,26 +79,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'avicola.wsgi.application'
 
 # Base de datos - PostgreSQL para producción
+# Usar SQLite siempre (tanto desarrollo como producción)
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'avicola_db'),
-        'USER': os.getenv('DB_USER', 'avicola_user'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'password'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-# Para desarrollo local usar SQLite
-if DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-
 
 
 AUTH_PASSWORD_VALIDATORS = [
