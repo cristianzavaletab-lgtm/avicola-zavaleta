@@ -1,11 +1,10 @@
-asgiref==3.10.0
-Django==5.2.7
-django-crispy-forms==2.4
-crispy-bootstrap5 @ git+https://github.com/django-crispy-forms/crispy-bootstrap5.git@c9578e9291e3c77998e7f8ec6c089719685ed678
-sqlparse==0.5.3
-tzdata==2025.2
-python-dotenv==1.0.0
-gunicorn==21.2.0
-whitenoise==6.6.0
-psycopg2-binary==2.9.9
-Pillow==10.1.0
+asgiref==3.10.0 
+Django==5.2.7 
+django-crispy-forms==2.4 
+crispy-bootstrap5 @ git+https://github.com/django-crispy-forms/crispy-bootstrap5.git@c9578e9291e3c77998e7f8ec6c089719685ed678 
+sqlparse==0.5.3 
+tzdata==2025.2 
+python-dotenv==1.0.0 
+gunicorn==21.2.0 
+whitenoise==6.6.0 
+psycopg2-binary==2.9.9 
